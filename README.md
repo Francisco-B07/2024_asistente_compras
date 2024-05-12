@@ -1,4 +1,4 @@
-![portada](./data/images/portada.png)
+![portada](./DatosPreciosSupermercado/imagenes/portada.png)
 
 # Asistente inteligente
 
