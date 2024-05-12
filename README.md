@@ -49,13 +49,25 @@ concentrarse en otras tareas
 - 
 
 ## Tecnologías Utilizadas
-- Python
-  - Numpy
-  - Pandas
-  - Seaborn
-  - Matplotlib
-  - Scikit-Learn
-  - keras
+- **Programing language:**
+  - **Python**
+    - *Libreiras para analisis de datos*
+      - *numpy*
+      - *pandas*
+      - *missingno*
+
+    - *Librerias para visualizacion de datos:*
+      - *matplotlib*
+      - *seaborn*
+      - *folium*
+
+    - *Librerias para aprendizaje automatico:*
+      - *scikit-learn*
+      - *joblib*
+
+    - *Librerias para aprendizaje profundo:*
+      - *NLP*
+        - *NLTK*
 
 ## Instalación de Paquetes
 ```bash
