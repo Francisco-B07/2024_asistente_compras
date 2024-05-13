@@ -1,11 +1,6 @@
-![portada](./DatosPreciosSupermercado/imagenes/portada.png)
-
 # Asistente inteligente
 
-## Descripcion:
-Este proyecto tiene como objetivo desarrollar un asistente de compras inteligente que utilice tecnología de procesamiento de voz para ayudar a los usuarios a realizar compras en línea de manera más eficiente. La idea es que el asistente pueda entender las necesidades del usuario a través de comandos de voz, buscar productos que se adapten a estas necesidades y comparar precios en diferentes tiendas en línea para sugerir la mejor opción.
-Además, el asistente podrá realizar el seguimiento de los pedidos y notificar al usuario sobre la entrega de los productos. Este sistema no solo mejorará la experiencia de compra en línea, sino que también ahorrará tiempo y esfuerzos a los usuarios, permitiéndoles
-concentrarse en otras tareas
+![portada](./DatosPreciosSupermercado/imagenes/portada.png)
 
 ## Estado del Proyecto
 - **En proceso**
@@ -13,14 +8,14 @@ concentrarse en otras tareas
 ## Estructura de Directorios y Archivos Resultantes
 
 
-    Sistema Predictivo de Alzheimer
+    Asistente inteligente
     │
     ├── DatosPreciosSupermercado # CSV's
     | |
-    │ ├── processed # Clean CSV's
-    │ └── raw # Original CSV's
+    │ ├── procesados # .csv procesados
+    │ └── limpios # .csv en bruto
     │
-    ├── notebooks # Notebook's and Script's
+    ├── notebooks # Cuadernos y guiones
     |   |
     │   |-- 1_comprensión_datos.ipynb
     |   |__ 2_preparacion_datos.ipynb
@@ -35,7 +30,7 @@ concentrarse en otras tareas
     |
     │-- LICENSE.md
     │
-    └── README.md # This file
+    └── README.md 
 
 
 ## Funciones y Aplicaciones
