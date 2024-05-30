@@ -1,6 +1,6 @@
 # Asistente inteligente
 
-![portada](./Datos/imagenes/procesados/portada.png)
+![portada](./datos/procesaodos/portada.png)
 
 ## Estado del Proyecto
 - **En proceso**
