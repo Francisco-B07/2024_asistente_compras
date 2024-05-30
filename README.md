@@ -1,6 +1,6 @@
 # Asistente inteligente
 
-![portada](./DatosPreciosSupermercado/imagenes/portada.png)
+![portada](./Datos/imagenes/procesados/portada.png)
 
 ## Estado del Proyecto
 - **En proceso**
