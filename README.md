@@ -71,11 +71,55 @@ pip3 install -r requerimientos.txt
 
 ## Despliegue de la Aplicación en local 
 
-- Descargar el repositorio  [2024_asistente_compras](https://github.com/ianCristianAriel/2024_asistente_compras) 
-
-- Intalar dependencias
+- Descargar el repositorio  [2024_asistente_compras](https://github.com/ianCristianAriel/2024_asistente_compras) o clonarlo 
 ```bash
-pip install fastapi uvicorn jinja2 pydub speechrecognition shutil os numpy pandas spacy re nltk gtts typing tensorflow pathlib
+git clone https://github.com/ianCristianAriel/2024_asistente_compras.git
+```
+
+- Acceder al repositorio clonado
+```bash
+cd 2024_asistente_compras
+```
+
+- Intalar dependencias necesarias
+```bash
+pip install fastapi 
+```
+```bash
+pip install uvicorn
+```
+```bash
+pip install jinja2 
+```
+```bash
+pip install pandas
+```
+```bash
+pip install tensorflow
+```
+```bash
+pip install speechrecognition
+```
+```bash
+pip install spacy
+```
+```bash
+pip install nltk
+```
+```bash
+pip install gtts
+```
+```bash
+pip install pydub
+```
+
+```bash
+pip install pillow
+```
+
+- Descargar el modelo es_core_news_sm
+```bash
+python -m spacy download es_core_news_sm
 ```
 
 - Acceder a la carpeta notebooks y scripts
