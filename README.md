@@ -69,6 +69,37 @@
 pip3 install -r requerimientos.txt
 ```
 
+## Despliegue de la Aplicación en local 
+
+- Descargar el repositorio  [2024_asistente_compras](https://github.com/ianCristianAriel/2024_asistente_compras) 
+
+- Intalar dependencias
+```bash
+pip install fastapi uvicorn jinja2 pydub speechrecognition shutil os numpy pandas spacy re nltk gtts typing tensorflow pathlib
+```
+
+- Acceder a la carpeta notebooks y scripts
+```bash
+cd '.\notebooks y scripts\'
+```
+
+- Acceder a la carpeta cd 5_despliegue
+```bash
+cd .\5_despliegue\
+```
+
+- Desplegar la aplicación web 
+```bash
+uvicorn app.main:app --reload
+```
+
+- Ingresar a la aplicación 
+
+    - Colocar en el navegador la dirección [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+- Navegar en la aplicación
+
+
 ## Personas Desarrolladoras del Proyecto:
 
 - [goncor](https://github.com/GonCor)
