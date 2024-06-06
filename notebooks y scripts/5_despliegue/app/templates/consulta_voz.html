@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Busqueda por texto</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <script defer src="/static/js/script.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center my-4">
+        <a href="/">
+          <img
+            src="/static/images/logo.jpg"
+            alt="logo asistente de compras"
+            height="80px"
+            width="auto"
+            class="logo"
+          />
+        </a>
+        <a href="/upload-image" class="boton">Buscar por imagen</a>
+        <a href="/search-by-text" class="boton">Buscar por texto</a>
+        <button
+          class="boton"
+          style="border-radius: 100%; width: 55px; height: 52px"
+          id="user_loggedIn"
+        >
+         {{userId}}
+        </button>
+      </div>
+      <h1 class="title">Busqueda por voz</h1>
+      <div class="container-input">
+        <h2>Presiona para grabar tu voz</h2>
+       <a class="boton" href="/process-audio">Grabar</a>
+        
+      </div>
+      {% if recomendaciones %}
+      <p>{{recomendaciones|safe }}</p>
+      
+      {% endif %}
+    </div>
+    
+  </body>
+</html>
