@@ -69,6 +69,81 @@
 pip3 install -r requerimientos.txt
 ```
 
+## Despliegue de la Aplicación en local 
+
+- Descargar el repositorio  [2024_asistente_compras](https://github.com/ianCristianAriel/2024_asistente_compras) o clonarlo 
+```bash
+git clone https://github.com/ianCristianAriel/2024_asistente_compras.git
+```
+
+- Acceder al repositorio clonado
+```bash
+cd 2024_asistente_compras
+```
+
+- Intalar dependencias necesarias
+```bash
+pip install fastapi 
+```
+```bash
+pip install uvicorn
+```
+```bash
+pip install jinja2 
+```
+```bash
+pip install pandas
+```
+```bash
+pip install tensorflow
+```
+```bash
+pip install speechrecognition
+```
+```bash
+pip install spacy
+```
+```bash
+pip install nltk
+```
+```bash
+pip install gtts
+```
+```bash
+pip install pydub
+```
+
+```bash
+pip install pillow
+```
+
+- Descargar el modelo es_core_news_sm
+```bash
+python -m spacy download es_core_news_sm
+```
+
+- Acceder a la carpeta notebooks y scripts
+```bash
+cd '.\notebooks y scripts\'
+```
+
+- Acceder a la carpeta cd 5_despliegue
+```bash
+cd .\5_despliegue\
+```
+
+- Desplegar la aplicación web 
+```bash
+uvicorn app.main:app --reload
+```
+
+- Ingresar a la aplicación 
+
+    - Colocar en el navegador la dirección [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+- Navegar en la aplicación
+
+
 ## Personas Desarrolladoras del Proyecto:
 
 - [goncor](https://github.com/GonCor)
