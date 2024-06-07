@@ -1,0 +1,11 @@
+fastapi 
+uvicorn
+jinja2 
+pandas
+tensorflow
+speechrecognition
+spacy
+nltk
+gtts
+pydub
+pillow

@@ -82,44 +82,15 @@ cd 2024_asistente_compras
 ```
 
 - Intalar dependencias necesarias
-```bash
-pip install fastapi 
-```
-```bash
-pip install uvicorn
-```
-```bash
-pip install jinja2 
-```
-```bash
-pip install pandas
-```
-```bash
-pip install tensorflow
-```
-```bash
-pip install speechrecognition
-```
-```bash
-pip install spacy
-```
-```bash
-pip install nltk
-```
-```bash
-pip install gtts
-```
-```bash
-pip install pydub
-```
 
 ```bash
-pip install pillow
+pip install -r requirements.txt
 ```
 
-- Descargar el modelo es_core_news_sm
+- Descargar los modelos
 ```bash
 python -m spacy download es_core_news_sm
+python -m nltk.downloader wordnet
 ```
 
 - Acceder a la carpeta notebooks y scripts
@@ -127,7 +98,7 @@ python -m spacy download es_core_news_sm
 cd '.\notebooks y scripts\'
 ```
 
-- Acceder a la carpeta cd 5_despliegue
+- Acceder a la carpeta 5_despliegue
 ```bash
 cd .\5_despliegue\
 ```
