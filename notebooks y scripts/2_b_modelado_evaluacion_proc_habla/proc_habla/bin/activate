@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/cristianariel/Desktop/Progreso/Codigo/Permanentes/2024_asistente_compras/notebooks y scripts/3_b_modelo_procesamiento_habla/proc_habla"
+VIRTUAL_ENV="/Users/cristianariel/Desktop/Progreso/Codigo/Permanentes/2024_asistente_compras/notebooks y scripts/2_b_modelado_evaluacion_proc_habla/proc_habla"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
