@@ -12,17 +12,16 @@
     │
     ├── DatosPreciosSupermercado # CSV's
     | |
-    │ ├── procesados # .csv procesados
-    │ └── limpios # .csv en bruto
+    │ ├── procesados # datos procesados
+    │ └── brutos # datos de entrada en bruto
     │
     ├── notebooks # Cuadernos y guiones
     |   |
-    │   |-- 1_comprensión_datos.ipynb
-    |   |__ 2_preparacion_datos.ipynb
-    |   |__ 2_preparacion_datos.ipynb
-    |   |__ 3_modelado.ipynb
-    |   |__ 4_evaluación.ipynb
-    |   |__ 5_despliegue.ipynb
+    │   |-- 1_comprension_preparacion_datos
+    |   |__ 2_a_modelado_evaluacion_proc_imagenes
+    |   |__ 2_b_modelado_evaluacion_proc_habla
+    |   |__ 2_c_modelo_recomendacion
+    |   |__ 3_despliegue
     │
     ├── .gitignore
     │
@@ -54,15 +53,19 @@
     - *Librerias para visualizacion de datos:*
       - *matplotlib*
       - *seaborn*
-      - *folium*
 
     - *Librerias para aprendizaje automatico:*
       - *scikit-learn*
-      - *joblib*
 
-    - *Librerias para aprendizaje profundo:*
-      - *NLP*
-        - *NLTK*
+    - *Librerias para PLN:*
+      - *Keras*
+      - *spaCy*
+
+    - *Librerias para captura y transcripcion de voz:*
+      - Speech Recognition
+
+    - *Librerias para transformar texto a audio:*
+      - gTTS
 
 ## Instalación de Paquetes
 ```bash
