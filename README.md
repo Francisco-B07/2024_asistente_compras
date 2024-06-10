@@ -10,7 +10,7 @@
 
     Asistente inteligente
     │
-    ├── DatosPreciosSupermercado # CSV's
+    ├── datos # CSV's
     | |
     │ ├── procesados # datos procesados
     │ └── brutos # datos de entrada en bruto
