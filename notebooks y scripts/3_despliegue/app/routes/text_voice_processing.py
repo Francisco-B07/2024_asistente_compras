@@ -54,38 +54,29 @@ nlp = spacy.load("es_core_news_sm")
 
 '''
 
-# Lectura y almacenado del dataframe
-path_csv_rutas_verduras = 'dataset/VerdurasporSupermercado.csv'
-df_frutas_verduras = pd.read_csv(path_csv_rutas_verduras)
+# Comprovacion de sinonimos
+def verifica_sinonimo_precios(tokens, sinonimos):
+    '''
+    Esta función verifica si dentro de la lista de tokens proporcionada como primer parámetro
+    se encuentra un sinónimo o derivación morfológica de alguna de las palabras dentro del diccionario de sinónimos.
 
+    Args:
+    'tokens': Recibe los tokens lematizados de la entrada del usuario.
+    'sinonimos': Diccionario de sinónimos para las referencias.
 
-# CAPTURA DE AUDIO
-async def entrada_voz(file: UploadFile = File(...)):
-    recognizer = sr.Recognizer()  # Se inicializa el objeto de la clase speech recognition con el metodo recognizer y almacena en la variable 'recognizer'
-    audio = AudioSegment.from_file(io.BytesIO(await file.read()), format="webm")
-    audio = audio.set_frame_rate(16000)  # Asegúrate de que la tasa de muestreo sea compatible
-
-
-    with io.BytesIO() as audio_file:
-        audio.export(audio_file, format="wav")
-        audio_file.seek(0)
-        audio_data = sr.AudioFile(audio_file)
-        with audio_data as source:
-            recognizer.adjust_for_ambient_noise(source, duration=1)
-            recognizer.energy_threshold = 300
-            recognizer.pause_threshold = 1.0
-            audio_content = recognizer.listen(source)
-
-    try:
-        texto = recognizer.recognize_google(audio_content, language='es-ES')
-    except sr.UnknownValueError:
-        texto = "No se pudo entender el audio"
-    except sr.RequestError as e:
-        texto = f"Error al conectarse con el servicio de Google: {e}"
-
-    return texto
-
-
+    Retorno:
+    Esta función retorna como resultado 'True' o 'False', según corresponda.
+    '''
+    # Convertir la lista de tokens a un conjunto para mejorar la eficiencia de búsqueda
+    tokens_set = set(tokens)
+    print(tokens_set)
+    # Recorrer todos los sinónimos en el diccionario
+    for sinonimos_list in sinonimos.values():
+        for sinonimo in sinonimos_list:
+            if sinonimo in tokens_set:
+                return True
+                
+    return False
 
 # Función encargada de procesar texto
 def procesar_texto(texto):
@@ -119,19 +110,6 @@ def procesar_texto(texto):
     }
 
 
-@router.get("/search-by-text/{userId}", response_class=HTMLResponse)
-async def searchByText(request: Request, userId: str):
-    return templates.TemplateResponse("search-by-text.html", {"request": request, "userId": userId})
-
-
-@router.get("/search-by-text/{userId}/texto", response_class=HTMLResponse)
-async def searchByText(request: Request, userId: str):
-    return templates.TemplateResponse("consulta_texto.html", {"request": request, "userId": userId})
-
-@router.get("/search-by-text/{userId}/audio", response_class=HTMLResponse)
-async def searchByText(request: Request, userId: str):
-    return templates.TemplateResponse("consulta_voz.html", {"request": request, "userId": userId})
-
 def entrada_voz():
     recognizer = sr.Recognizer()  # Se inicializa el objeto de la clase speech recognition con el metodo recognizer y almacena en la variable 'recognizer'
     mic = sr.Microphone()  # Configuración del micrófono como fuente de audio
@@ -155,11 +133,28 @@ def entrada_voz():
 
 
 
+@router.get("/search-by-text/{userId}", response_class=HTMLResponse)
+async def searchByText(request: Request, userId: str):
+    return templates.TemplateResponse("search-by-text.html", {"request": request, "userId": userId})
+
+
+@router.get("/search-by-text/{userId}/texto", response_class=HTMLResponse)
+async def searchByText(request: Request, userId: str):
+    return templates.TemplateResponse("consulta_texto.html", {"request": request, "userId": userId})
+
+@router.get("/search-by-text/{userId}/audio", response_class=HTMLResponse)
+async def searchByText(request: Request, userId: str):
+    return templates.TemplateResponse("consulta_voz.html", {"request": request, "userId": userId})
+
+
+
 @router.get("/process-texto")
 async def process_input(request: Request, texto: str = Query(...)):
-    print("in", texto)
     # Defino el diccionario donde se almacenara la informacion de entrada y salida de la consulta
     consulta_dict = {}
+    path_csv_rutas_verduras = 'dataset/VerdurasporSupermercado.csv'
+    df_frutas_verduras = pd.read_csv(path_csv_rutas_verduras)
+   
     
     # Procesar texto
     texto_analizado = procesar_texto(texto)
@@ -167,6 +162,18 @@ async def process_input(request: Request, texto: str = Query(...)):
     tokens_filtrados = texto_analizado['filtered_tokens']
     lemmas_filtrados = texto_analizado['lemmas']
     pos_tags_filtrados = texto_analizado['pos_tags']
+
+    # Lista de sinónimos para las referencias
+    sinonimos = {
+        "económico": ["barato", "asequible", "económico"],
+        "barato": ["económico", "asequible", "barato"],
+        "asequible": ["económico", "barato", "asequible"],
+        "precio": ["coste", "precio"],
+        "coste": ["precio", "coste"]
+    }
+
+    # Verificar si hay algún sinónimo o derivación en los tokens lematizados
+    consulta_precio = verifica_sinonimo_precios(lemmas_filtrados, sinonimos=sinonimos)
 
     df_frutas_verduras['producto_tokens_lemmas'] = df_frutas_verduras['Producto'].apply(lambda x: procesar_texto(x)['lemmas'])
 
@@ -182,6 +189,8 @@ async def process_input(request: Request, texto: str = Query(...)):
 
     series_ordered_count_coincidences = pd.Series(dict_count_coincidences)
 
+    series_ordered_count_coincidences = series_ordered_count_coincidences.sort_values(ascending=False)
+
     consulta_dict['id_consulta'] = None  # ID de la consulta (aún no asignado)
     consulta_dict['id_cliente'] = None  # ID del cliente (aún no asignado)
     # consulta_dict['formato_consulta'] = entrada_tipo  # Formato de la consulta (aún no especificado)
@@ -192,28 +201,51 @@ async def process_input(request: Request, texto: str = Query(...)):
     audio_recomendacion = None  # Audio de la recomendación (aún no generado)
 
     df_frutas_verduras['Precio'] = df_frutas_verduras['Precio'].apply(common_functions.limpiar_signo_peso)
-    series_ordered_count_coincidences = series_ordered_count_coincidences.sort_values(ascending=False)
+    
+    # DataFrame filtrado por columnas de interes
+    df_productos_filtrados = df_frutas_verduras.loc[series_ordered_count_coincidences.index, ['Producto', 'Supermercado', 'Precio']]
+
+    # Se comprueba si hay algun token con relacion los sinonimos de referencia
+    # DataFrame filtrado, acortado y ordenado por precio
+    if consulta_precio:
+        df_productos_filtrados = df_productos_filtrados.sort_values(by='Precio')
+        df_productos_filtrados = df_productos_filtrados[:5]
+    else:
+        # DataFrame filtrado, acortado a 5 resultados
+        df_productos_filtrados = df_productos_filtrados[:5]
+
+    diccionario_productos_precio = {}
 
     recomendacion = 'Los productos recomendados basados en su consulta y características mencionadas son:\n'
-    lista_string_reco_supers_prods = []
+    for count, (x, producto_filtrado_info) in enumerate(df_productos_filtrados.iterrows(), start=1):
+        # Añadir detalles del producto al diccionario
+        diccionario_productos_precio[x] = {
+            'Posicion': count,
+            'Producto': producto_filtrado_info['Producto'],
+            'Supermercado': producto_filtrado_info['Supermercado'],
+            'Precio': producto_filtrado_info['Precio']
+        }
+        # Añadir recomendación a la lista
+        recomendacion += f'\n En la posición {count}: {producto_filtrado_info["Producto"]} en {producto_filtrado_info["Supermercado"]} a {producto_filtrado_info["Precio"]} pesos'
 
-    for count, x in enumerate(series_ordered_count_coincidences.index, start=1):
-        producto, supermercado, precio = df_frutas_verduras.loc[x, ['Producto', 'Supermercado', 'Precio']]
-        lista_string_reco_supers_prods.append(f'En la posición {count}: {producto} en {supermercado} a {precio} pesos\n')
-
-    recomendacion += ''.join(lista_string_reco_supers_prods)
+    # Redondear números en la recomendación (si es necesario)
     recomendacion = common_functions.redondear_numeros(recomendacion)
+    
     consulta_dict['card_recomendacion'] = recomendacion
 
+
     tts = gTTS(text=recomendacion, lang='es')
-    audio_buffer = io.BytesIO()
-    tts.write_to_fp(audio_buffer)
-    audio_buffer.seek(0)
-    consulta_dict['recomendacion_audio'] = audio_buffer
+    # audio_buffer = io.BytesIO()
+    # tts.write_to_fp(audio_buffer)
+    # audio_buffer.seek(0)
+    # consulta_dict['recomendacion_audio'] = audio_buffer
+    audio_file_path = 'public/static/audio/recomendacion.mp3'
+    tts.save(audio_file_path)
+   
 
     recomendaciones = consulta_dict['card_recomendacion'].replace("\n", "<br>")
 
-    print("consulta_dict",consulta_dict)
+    # print("consulta_dict",consulta_dict)
 
     return templates.TemplateResponse("consulta_texto.html", {"request": request, "recomendaciones": recomendaciones})
 
@@ -232,6 +264,18 @@ async def process_input(request: Request):
     lemmas_filtrados = texto_analizado['lemmas']
     pos_tags_filtrados = texto_analizado['pos_tags']
 
+    # Lista de sinónimos para las referencias
+    sinonimos = {
+        "económico": ["barato", "asequible", "económico"],
+        "barato": ["económico", "asequible", "barato"],
+        "asequible": ["económico", "barato", "asequible"],
+        "precio": ["coste", "precio"],
+        "coste": ["precio", "coste"]
+    }
+
+    # Verificar si hay algún sinónimo o derivación en los tokens lematizados
+    consulta_precio = verifica_sinonimo_precios(lemmas_filtrados, sinonimos=sinonimos)
+
     df_frutas_verduras['producto_tokens_lemmas'] = df_frutas_verduras['Producto'].apply(lambda x: procesar_texto(x)['lemmas'])
 
     dict_count_coincidences = {}
@@ -246,6 +290,8 @@ async def process_input(request: Request):
 
     series_ordered_count_coincidences = pd.Series(dict_count_coincidences)
 
+    series_ordered_count_coincidences = series_ordered_count_coincidences.sort_values(ascending=False)
+
     consulta_dict['id_consulta'] = None  # ID de la consulta (aún no asignado)
     consulta_dict['id_cliente'] = None  # ID del cliente (aún no asignado)
     # consulta_dict['formato_consulta'] = entrada_tipo  # Formato de la consulta (aún no especificado)
@@ -256,17 +302,36 @@ async def process_input(request: Request):
     audio_recomendacion = None  # Audio de la recomendación (aún no generado)
 
     df_frutas_verduras['Precio'] = df_frutas_verduras['Precio'].apply(common_functions.limpiar_signo_peso)
-    series_ordered_count_coincidences = series_ordered_count_coincidences.sort_values(ascending=False)
+    
+    # DataFrame filtrado por columnas de interes
+    df_productos_filtrados = df_frutas_verduras.loc[series_ordered_count_coincidences.index, ['Producto', 'Supermercado', 'Precio']]
+
+    # Se comprueba si hay algun token con relacion los sinonimos de referencia
+    # DataFrame filtrado, acortado y ordenado por precio
+    if consulta_precio:
+        df_productos_filtrados = df_productos_filtrados.sort_values(by='Precio')
+        df_productos_filtrados = df_productos_filtrados[:5]
+    else:
+        # DataFrame filtrado, acortado a 5 resultados
+        df_productos_filtrados = df_productos_filtrados[:5]
+
+    diccionario_productos_precio = {}
 
     recomendacion = 'Los productos recomendados basados en su consulta y características mencionadas son:\n'
-    lista_string_reco_supers_prods = []
+    for count, (x, producto_filtrado_info) in enumerate(df_productos_filtrados.iterrows(), start=1):
+        # Añadir detalles del producto al diccionario
+        diccionario_productos_precio[x] = {
+            'Posicion': count,
+            'Producto': producto_filtrado_info['Producto'],
+            'Supermercado': producto_filtrado_info['Supermercado'],
+            'Precio': producto_filtrado_info['Precio']
+        }
+        # Añadir recomendación a la lista
+        recomendacion += f'\n En la posición {count}: {producto_filtrado_info["Producto"]} en {producto_filtrado_info["Supermercado"]} a {producto_filtrado_info["Precio"]} pesos'
 
-    for count, x in enumerate(series_ordered_count_coincidences.index, start=1):
-        producto, supermercado, precio = df_frutas_verduras.loc[x, ['Producto', 'Supermercado', 'Precio']]
-        lista_string_reco_supers_prods.append(f'En la posición {count}: {producto} en {supermercado} a {precio} pesos\n')
-
-    recomendacion += ''.join(lista_string_reco_supers_prods)
+    # Redondear números en la recomendación (si es necesario)
     recomendacion = common_functions.redondear_numeros(recomendacion)
+    
     consulta_dict['card_recomendacion'] = recomendacion
 
     tts = gTTS(text=recomendacion, lang='es')

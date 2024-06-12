@@ -12,6 +12,9 @@ app = FastAPI()
 # Montar el directorio estático
 app.mount("/static", StaticFiles(directory="./public/static"), name="static")
 
+# Montar la carpeta 'audio' para servir archivos estáticos
+app.mount("/audio", StaticFiles(directory="./public/static/audio"), name="audio")
+
 # Configuración de las plantillas
 templates = Jinja2Templates(directory="app/templates")
 

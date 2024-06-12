@@ -101,7 +101,7 @@ cd '.\notebooks y scripts\'
 
 - Acceder a la carpeta 5_despliegue
 ```bash
-cd .\5_despliegue\
+cd .\3_despliegue\
 ```
 
 - Desplegar la aplicación web 
