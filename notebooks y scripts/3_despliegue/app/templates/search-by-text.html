@@ -24,7 +24,7 @@
           />
         </a>
         <a href="/upload-image" class="boton">Buscar por imagen</a>
-        <a href="/search-by-text" class="boton">Buscar por texto</a>
+        <a id="search-by-text" class="boton">Buscar por texto</a>
         <button
           class="boton"
           style="border-radius: 100%; width: 55px; height: 52px"
@@ -58,5 +58,12 @@
         </article>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", async (event) => {
+        const buttonSearchByText = document.getElementById("search-by-text");
+        const selectedUserId = localStorage.getItem("user_id");
+        buttonSearchByText.href = `/search-by-text/${selectedUserId}`;
+      });
+    </script>
   </body>
 </html>

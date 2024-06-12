@@ -9,3 +9,4 @@ nltk
 gtts
 pydub
 pillow
+pyaudio

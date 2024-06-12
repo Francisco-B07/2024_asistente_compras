@@ -29,7 +29,7 @@
           />
         </a>
         <a href="/upload-image" class="boton">Buscar por imagen</a>
-        <a href="/search-by-text" class="boton">Buscar por texto</a>
+        <a id="search-by-text" class="boton">Buscar por texto</a>
         <button
           class="boton"
           style="border-radius: 100%; width: 55px; height: 52px"
@@ -49,18 +49,20 @@
       
       {% endif %}
     </div> -->
-    
+    {% if texto != ""  %}
     <form action="/process-audio" method="get" >
-  <p>Realice su consulta</p>
+  <p>Presione el microfono y realice su consulta</p>
   <button
   id="process-audio"
   type="submit"
-  onclick="process()"
   >
+  <i id="recordButton" class="bi bi-mic-fill" ></i>
   <!-- Buscar -->
-  <i id="recordButton" class="bi bi-mic-fill" onclick="process()"></i>
   <!-- <p id="recordingTime">Tiempo de grabación: 00:00</p> -->
 </button>
+{% else%}
+<a id="redirect-consulta-audio">Ingresar una nueva consulta</a>
+{% endif %}
 {% if texto  %}
   <p>Usted dijo: {{texto}}</p>
 
@@ -82,13 +84,19 @@
   {% endif %}
 </div>
 <script>
+  document.addEventListener("DOMContentLoaded", async (event) => {
+    const buttonSearchByText = document.getElementById("search-by-text");
+    const buttonRedirectAudio = document.getElementById("redirect-consulta-audio");
+    const selectedUserId = localStorage.getItem("user_id")
+    buttonSearchByText.href = `/search-by-text/${selectedUserId}`
+    buttonRedirectAudio.href = `/search-by-text/${selectedUserId}/audio`
   const userId = localStorage.getItem("user_id");
-  console.log("user", userId);
-  const buttonBuscarText = document.getElementById("user_loggedIn");
-  const userHTML = `
-      <span >${userId}  </span>
-      `;
-  buttonBuscarText.innerHTML = userHTML;
+const buttonBuscarText = document.getElementById("user_loggedIn");
+const userHTML = `
+<span >${userId}  </span>
+`;
+buttonBuscarText.innerHTML = userHTML;
+})
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);

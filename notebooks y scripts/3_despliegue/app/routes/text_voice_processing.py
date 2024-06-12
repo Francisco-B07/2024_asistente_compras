@@ -123,10 +123,10 @@ def entrada_voz():
     #     audio = recognizer.listen(source)
 
     with mic as source:
-        recognizer.adjust_for_ambient_noise(source, duration=1)
+        # recognizer.adjust_for_ambient_noise(source, duration=1)
         # Ajuste de sensibilidad y tiempo de pausa
-        recognizer.energy_threshold = 300  # Ajustar según el entorno
-        recognizer.pause_threshold = 1.0  # Ajustar según necesidad
+        # recognizer.energy_threshold = 300  # Ajustar según el entorno
+        # recognizer.pause_threshold = 1.0  # Ajustar según necesidad
         print("Por favor, habla ahora.")  # Indicación para el usuario
         audio = recognizer.listen(source)  # Escucha y captura del audio mientras escuche entrada de voz continua
 
@@ -163,14 +163,6 @@ async def searchByText(request: Request, userId: str):
 
 # Directorio donde se guardarán los archivos de audio
 UPLOAD_DIR = 'public/static/audio'
-
-@router.post("/upload-audio/")
-async def upload_audio(file: UploadFile = File(...)):
-    print("entreeeeeee")
-    # Crear el directorio si no existe
-    file_path = UPLOAD_DIR / "audio.wav"
-    with file_path.open("wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
 
 
 @router.get("/process-texto")
@@ -271,8 +263,6 @@ async def process_input(request: Request, texto: str = Query(...)):
 @router.get("/process-audio")
 async def process_input(request: Request):
     texto = entrada_voz()
-    # texto = 'manzana'
-    print("in", texto)
     # Defino el diccionario donde se almacenara la informacion de entrada y salida de la consulta
     consulta_dict = {}
     
