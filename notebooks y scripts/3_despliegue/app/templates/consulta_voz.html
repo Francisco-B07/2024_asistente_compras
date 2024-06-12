@@ -9,7 +9,12 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     />
-    <script defer src="/static/js/script.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <!-- <script defer src="/static/js/script.js"></script> -->
+
+      
   </head>
   <body>
     <div class="container">
@@ -34,7 +39,7 @@
         </button>
       </div>
       <h1 class="title">Busqueda por voz</h1>
-      <div class="container-input">
+      <!-- <div class="container-input">
         <h2>Presiona para grabar tu voz</h2>
        <a class="boton" href="/process-audio">Grabar</a>
         
@@ -43,7 +48,70 @@
       <p>{{recomendaciones|safe }}</p>
       
       {% endif %}
-    </div>
+    </div> -->
     
+    <form action="/process-audio" method="get" >
+  <p>Realice su consulta</p>
+  <button
+  id="process-audio"
+  type="submit"
+  onclick="process()"
+  >
+  <!-- Buscar -->
+  <i id="recordButton" class="bi bi-mic-fill" onclick="process()"></i>
+  <!-- <p id="recordingTime">Tiempo de grabación: 00:00</p> -->
+</button>
+{% if texto  %}
+  <p>Usted dijo: {{texto}}</p>
+
+{% elif texto == "" %}
+  <p>No se pudo entender el audio</p>
+{% else%}
+  <p></p>
+{% endif %}
+    </form>
+    
+      
+
+  </div>
+  {% if recomendaciones %}
+  <!-- <audio controls src="static/audio/recomendacion.mp3"></audio> -->
+  <h3 id="orden-consulta"></h3>
+  <p>{{recomendaciones|safe }}</p>
+
+  {% endif %}
+</div>
+<script>
+  const userId = localStorage.getItem("user_id");
+  console.log("user", userId);
+  const buttonBuscarText = document.getElementById("user_loggedIn");
+  const userHTML = `
+      <span >${userId}  </span>
+      `;
+  buttonBuscarText.innerHTML = userHTML;
+
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function generateRandomNumber() {
+    let randomInt = getRandomInt(1, 100);
+    document.getElementById("orden-consulta").innerText =
+      "Orden de consulta N°: " + randomInt;
+  }
+  generateRandomNumber();
+  async function process() {
+    const response = await fetch(
+      `http://127.0.0.1:8000/process-audio`
+    );
+
+    const productos = await response.json();
+  }
+  
+</script>
+    
+
   </body>
 </html>

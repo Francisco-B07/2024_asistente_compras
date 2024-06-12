@@ -1,6 +1,6 @@
 # Librerías para reconocimiento de voz y procesamiento de audio
 import speech_recognition as sr
-
+import time
 # Librerías para manipulación de archivos y compresión
 
 import os
@@ -27,6 +27,8 @@ from app.funciones_comunes import common_functions
 from fastapi import APIRouter, HTTPException, Request, Form, Query, FastAPI, File, UploadFile
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+
 # from starlette.requests import Request
 from pydub import AudioSegment
 
@@ -34,6 +36,8 @@ from typing import Dict
 
 router = APIRouter()
 
+class Data(BaseModel):
+    user: str
 # Configuración de las plantillas
 templates = Jinja2Templates(directory="app/templates")
 
@@ -111,8 +115,12 @@ def procesar_texto(texto):
 
 
 def entrada_voz():
+
     recognizer = sr.Recognizer()  # Se inicializa el objeto de la clase speech recognition con el metodo recognizer y almacena en la variable 'recognizer'
     mic = sr.Microphone()  # Configuración del micrófono como fuente de audio
+
+    # with sr.AudioFile('public/static/audio/consulta.wav') as source:
+    #     audio = recognizer.listen(source)
 
     with mic as source:
         recognizer.adjust_for_ambient_noise(source, duration=1)
@@ -122,8 +130,14 @@ def entrada_voz():
         print("Por favor, habla ahora.")  # Indicación para el usuario
         audio = recognizer.listen(source)  # Escucha y captura del audio mientras escuche entrada de voz continua
 
+    texto = ""  # Inicialización de la variable texto
+
     try:
+        print('el audio se esta leyendo...')
         texto = recognizer.recognize_google(audio, language='es-ES')  # Reconocimiento de voz utilizando Google
+        print(f'Has dicho: {texto}')
+       
+       
     except sr.UnknownValueError:
         print("No se pudo entender el audio")  # Manejo de error en caso de audio no reconocido
     except sr.RequestError as e:
@@ -147,11 +161,23 @@ async def searchByText(request: Request, userId: str):
     return templates.TemplateResponse("consulta_voz.html", {"request": request, "userId": userId})
 
 
+# Directorio donde se guardarán los archivos de audio
+UPLOAD_DIR = 'public/static/audio'
+
+@router.post("/upload-audio/")
+async def upload_audio(file: UploadFile = File(...)):
+    print("entreeeeeee")
+    # Crear el directorio si no existe
+    file_path = UPLOAD_DIR / "audio.wav"
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
 
 @router.get("/process-texto")
 async def process_input(request: Request, texto: str = Query(...)):
     # Defino el diccionario donde se almacenara la informacion de entrada y salida de la consulta
     consulta_dict = {}
+
     path_csv_rutas_verduras = 'dataset/VerdurasporSupermercado.csv'
     df_frutas_verduras = pd.read_csv(path_csv_rutas_verduras)
    
@@ -233,19 +259,11 @@ async def process_input(request: Request, texto: str = Query(...)):
     
     consulta_dict['card_recomendacion'] = recomendacion
 
-
     tts = gTTS(text=recomendacion, lang='es')
-    # audio_buffer = io.BytesIO()
-    # tts.write_to_fp(audio_buffer)
-    # audio_buffer.seek(0)
-    # consulta_dict['recomendacion_audio'] = audio_buffer
     audio_file_path = 'public/static/audio/recomendacion.mp3'
     tts.save(audio_file_path)
-   
 
     recomendaciones = consulta_dict['card_recomendacion'].replace("\n", "<br>")
-
-    # print("consulta_dict",consulta_dict)
 
     return templates.TemplateResponse("consulta_texto.html", {"request": request, "recomendaciones": recomendaciones})
 
@@ -253,9 +271,13 @@ async def process_input(request: Request, texto: str = Query(...)):
 @router.get("/process-audio")
 async def process_input(request: Request):
     texto = entrada_voz()
+    # texto = 'manzana'
     print("in", texto)
     # Defino el diccionario donde se almacenara la informacion de entrada y salida de la consulta
     consulta_dict = {}
+    
+    path_csv_rutas_verduras = 'dataset/VerdurasporSupermercado.csv'
+    df_frutas_verduras = pd.read_csv(path_csv_rutas_verduras)
     
     # Procesar texto
     texto_analizado = procesar_texto(texto)
@@ -334,14 +356,8 @@ async def process_input(request: Request):
     
     consulta_dict['card_recomendacion'] = recomendacion
 
-    tts = gTTS(text=recomendacion, lang='es')
-    audio_buffer = io.BytesIO()
-    tts.write_to_fp(audio_buffer)
-    audio_buffer.seek(0)
-    consulta_dict['recomendacion_audio'] = audio_buffer
-
     recomendaciones = consulta_dict['card_recomendacion'].replace("\n", "<br>")
 
     print("consulta_dict",consulta_dict)
 
-    return templates.TemplateResponse("consulta_voz.html", {"request": request, "recomendaciones": recomendaciones})
+    return templates.TemplateResponse("consulta_voz.html", {"request": request, "recomendaciones": recomendaciones, "texto":texto})
