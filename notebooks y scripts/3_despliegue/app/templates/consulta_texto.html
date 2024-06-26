@@ -57,7 +57,7 @@
       </div>
       <h1 class="title">Busqueda por texto</h1>
       <div class="container-input">
-        <h2>Ingrese un producto</h2>
+        <h2 style="font-weight: 600;">Ingrese su consulta</h2>
         <form action="/process-texto" method="get" class="form-input-text">
           <input
             type="text"
@@ -77,9 +77,9 @@
         </form>
       </div>
       {% if recomendaciones %}
-      <audio controls src="static/audio/recomendacion.mp3"></audio>
       <h3 id="orden-consulta"></h3>
-      <p>{{recomendaciones|safe }}</p>
+      <audio controls src="static/audio/recomendacion.mp3"></audio>
+      <p style="font-weight: 500;">{{recomendaciones|safe }}</p>
 
       {% endif %}
     </div>
@@ -90,7 +90,7 @@
         buttonSearchByText.href = `/search-by-text/${selectedUserId}`;
       });
       const userId = localStorage.getItem("user_id");
-      console.log("user", userId);
+      
       const buttonBuscarText = document.getElementById("user_loggedIn");
       const userHTML = `
           <span >${userId}  </span>

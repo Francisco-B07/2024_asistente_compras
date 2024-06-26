@@ -75,7 +75,7 @@
           const productos = await response.json();
           const productosDiv = document.getElementById("productos");
           const selectedUserId = await localStorage.getItem("user_id");
-          console.log("selectedUserId", selectedUserId);
+          
 
           productos.forEach((producto) => {
             const productoHTML = `

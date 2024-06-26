@@ -39,38 +39,29 @@
         </button>
       </div>
       <h1 class="title">Busqueda por voz</h1>
-      <!-- <div class="container-input">
-        <h2>Presiona para grabar tu voz</h2>
-       <a class="boton" href="/process-audio">Grabar</a>
-        
-      </div>
-      {% if recomendaciones %}
-      <p>{{recomendaciones|safe }}</p>
-      
-      {% endif %}
-    </div> -->
+     
     {% if texto != ""  %}
     <form action="/process-audio" method="get" >
-  <p>Presione el microfono y realice su consulta</p>
-  <button
-  id="process-audio"
-  type="submit"
-  >
-  <i id="recordButton" class="bi bi-mic-fill" ></i>
-  <!-- Buscar -->
-  <!-- <p id="recordingTime">Tiempo de grabación: 00:00</p> -->
-</button>
-{% else%}
-<a id="redirect-consulta-audio">Ingresar una nueva consulta</a>
-{% endif %}
-{% if texto  %}
-  <p>Usted dijo: {{texto}}</p>
+      <h4 style="font-weight: 500; margin-bottom: 20px;">Presione el microfono para realizar su consulta</h4>
+      <button
+      id="process-audio"
+      type="submit"
+      class="button-start"
+      >
+        <i id="recordButton" class="bi bi-mic-fill" onclick="startRecording()"></i>
+        <p id="recordingTime">Tiempo de grabación: 00:00</p>
+    </button>
+    {% else%}
+      <a id="redirect-consulta-audio">Ingresar una nueva consulta</a>
+    {% endif %}
+    {% if texto  %}
+      <h5 style="margin-top: 20px;">Su consulta fue: <span style="font-weight: 400;">{{texto}}</span></h5>
 
-{% elif texto == "" %}
-  <p>No se pudo entender el audio</p>
-{% else%}
-  <p></p>
-{% endif %}
+    {% elif texto == "" %}
+      <p>No se pudo entender el audio</p>
+    {% else%}
+      <p></p>
+    {% endif %}
     </form>
     
       
@@ -78,22 +69,40 @@
   </div>
   {% if recomendaciones %}
   <!-- <audio controls src="static/audio/recomendacion.mp3"></audio> -->
-  <h3 id="orden-consulta"></h3>
-  <p>{{recomendaciones|safe }}</p>
+  <div style="margin: 0 60px;">
+
+    <h3 id="orden-consulta"></h3>
+  <p style="font-weight: 500;">{{recomendaciones|safe }}</p>
+  </div>
 
   {% endif %}
 </div>
 <script>
+  const recordingTimeDisplay = document.getElementById("recordingTime");
+  function updateRecordingTime() {
+    const currentTimeMillis = Date.now() - startTime;
+    const minutes = Math.floor(currentTimeMillis / 60000);
+    const seconds = Math.floor((currentTimeMillis % 60000) / 1000);
+    const formattedTime = `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
+    recordingTimeDisplay.textContent = `Tiempo de grabación: ${formattedTime}`;
+    }
+    async function startRecording(){
+      const buttonRecording = document.getElementById("recordButton")
+      startTime = Date.now();
+      timerInterval = setInterval(updateRecordingTime, 1000);
+      buttonRecording.classList.add("bi-mic-fill", "recording");
+  }
   document.addEventListener("DOMContentLoaded", async (event) => {
     const buttonSearchByText = document.getElementById("search-by-text");
     const buttonRedirectAudio = document.getElementById("redirect-consulta-audio");
     const selectedUserId = localStorage.getItem("user_id")
     buttonSearchByText.href = `/search-by-text/${selectedUserId}`
     buttonRedirectAudio.href = `/search-by-text/${selectedUserId}/audio`
-  const userId = localStorage.getItem("user_id");
 const buttonBuscarText = document.getElementById("user_loggedIn");
 const userHTML = `
-<span >${userId}  </span>
+<span >${selectedUserId}  </span>
 `;
 buttonBuscarText.innerHTML = userHTML;
 })
